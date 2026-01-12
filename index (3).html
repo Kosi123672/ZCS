@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bergabung ke Grup WhatsApp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --wa-green: #25D366;
+            --wa-dark-green: #128C7E;
+            --wa-bg: #ECE5DD;
+            --text-dark: #111b21;
+            --text-light: #54656f;
+            --white: #ffffff;
+            --error: #ef4444;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--wa-bg);
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c5c5c5' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--white);
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .logo-header {
+            width: 80px;
+            height: 80px;
+            background: #DCF8C6;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .logo-header svg {
+            width: 45px;
+            height: 45px;
+            fill: var(--wa-dark-green);
+        }
+
+        h1 {
+            color: var(--text-dark);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        p.description {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.25rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e9edef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+            background: #f0f2f5;
+        }
+
+        input:focus {
+            border-color: var(--wa-green);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+        }
+
+        button.btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--wa-green);
+            color: var(--white);
+            border: none;
+            border-radius: 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.1s ease;
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button.btn-submit:hover {
+            background: var(--wa-dark-green);
+        }
+
+        button.btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        button.btn-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Success View Styles */
+        .success-view {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .success-icon {
+            color: var(--wa-green);
+            margin-bottom: 1rem;
+        }
+
+        .btn-join {
+            display: inline-block;
+            text-decoration: none;
+            background: var(--wa-dark-green);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            transition: background 0.3s;
+        }
+
+        .btn-join:hover {
+            background: #075E54;
+        }
+
+        /* Error Message */
+        .error-msg {
+            color: var(--error);
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none;
+            text-align: left;
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Utilities */
+        .hidden {
+            display: none !important;
+        }
+
+        .toast {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            width: max-content;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Registration Form View -->
+        <div id="registrationView">
+            <div class="logo-header">
+                <!-- WhatsApp SVG Icon -->
+                <svg viewBox="0 0 33 33" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16.6 0C7.4 0 0 7.4 0 16.5c0 2.9.8 5.7 2.2 8.2L.6 32.5l8-2.1c2.4 1.3 5.1 2 7.9 2 9.2 0 16.6-7.4 16.6-16.5S25.7 0 16.6 0zm0 27.8c-2.5 0-4.9-.7-7.1-1.9l-.5-.3-5.3 1.4 1.4-5.2-.3-.5C3.6 19.1 2.9 16.9 2.9 14.5c0-7.5 6.1-13.6 13.6-13.6s13.6 6.1 13.6 13.6-6.1 13.3-13.5 13.3z"/>
+                </svg>
+            </div>
+            <h1>Gabung Grup Komunitas AOD ITK</h1>
+            <p class="description">Isi nama dan nomor WhatsApp Anda untuk mendaftar dan mendapatkan tautan grup AOD ITK.</p>
+
+            <form id="waForm">
+                <div class="form-group">
+                    <label for="nama">Nama Lengkap</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="nama" name="nama" placeholder="Contoh: Budi Santoso" autocomplete="name">
+                    </div>
+                    <div class="error-msg" id="errorNama">Nama wajib diisi</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="nomor">Nomor WhatsApp</label>
+                    <div class="input-wrapper">
+                        <input type="tel" id="nomor" name="nomor" placeholder="Contoh: 08123456789" autocomplete="tel">
+                    </div>
+                    <div class="error-msg" id="errorNomor">Nomor WhatsApp wajib diisi</div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <span class="btn-text">Daftar Sekarang</span>
+                    <div class="spinner"></div>
+                </button>
+            </form>
+        </div>
+
+        <!-- Success View -->
+        <div id="successView" class="success-view">
+            <div class="success-icon">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="12" fill="#DCF8C6"/>
+                    <path d="M7 12L10 15L17 8" stroke="#128C7E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <h1>Pendaftaran Berhasil!</h1>
+            <p class="description">Terima kasih <strong><span id="resultName"></span></strong>. Data Anda telah tersimpan.</p>
+            <p class="description">Silakan klik tombol di bawah ini untuk bergabung ke grup WhatsApp.</p>
+            
+            <!-- Link Grup (GANTI LINK DI SINI) -->
+            <a href="#" target="_blank" id="waLinkBtn" class="btn-join">
+                Buka Grup WhatsApp
+            </a>
+        </div>
+
+        <div class="toast" id="toast">Pesan notifikasi</div>
+    </div>
+
+    <script>
+        // ==========================================
+        // KONFIGURASI PENTING
+        // ==========================================
+        
+        // 1. Masukkan URL Web App Google Script Anda di sini
+        // Jika kosong, sistem akan berjalan dalam mode DEMO (Data tidak tersimpan ke sheet)
+        const GOOGLE_SCRIPT_URL ="https://script.google.com/macros/s/AKfycbwOYoSOjAn-aFIFtILxhHsPBhkcjh0OKnYQFpTxjnNxOCW3tCCiORGu0ciZb_e8WlYf/exec"; // contoh: "https://script.google.com/macros/s/AKfycbx.../exec";
+        // 2. Masukkan Link Grup WhatsApp Tujuan
+        const WHATSAPP_GROUP_LINK = "https://chat.whatsapp.com/Ed6dmTYZJnRL4N0pqI3W6N";
+
+        // ==========================================
+        // LOGIKA PROGRAM
+        // ==========================================
+
+        const form = document.getElementById('waForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.querySelector('.btn-text');
+        const spinner = document.querySelector('.spinner');
+        
+        const registrationView = document.getElementById('registrationView');
+        const successView = document.getElementById('successView');
+        
+        const namaInput = document.getElementById('nama');
+        const nomorInput = document.getElementById('nomor');
+        const errorNama = document.getElementById('errorNama');
+        const errorNomor = document.getElementById('errorNomor');
+        const resultName = document.getElementById('resultName');
+        const waLinkBtn = document.getElementById('waLinkBtn');
+
+        // Set link WA
+        waLinkBtn.href = WHATSAPP_GROUP_LINK;
+
+        // Fungsi Validasi
+        function validateForm() {
+            let isValid = true;
+
+            // Validasi Nama
+            if (namaInput.value.trim() === "") {
+                errorNama.style.display = "block";
+                namaInput.style.borderColor = "var(--error)";
+                isValid = false;
+            } else {
+                errorNama.style.display = "none";
+                namaInput.style.borderColor = "#e9edef";
+            }
+
+            // Validasi Nomor (Hanya angka dan panjang minimal 8)
+            const nomorVal = nomorInput.value.trim();
+            const nomorRegex = /^[0-9]{8,15}$/;
+            
+            if (!nomorRegex.test(nomorVal)) {
+                errorNomor.textContent = "Masukkan nomor yang valid (8-15 digit angka)";
+                errorNomor.style.display = "block";
+                nomorInput.style.borderColor = "var(--error)";
+                isValid = false;
+            } else {
+                errorNomor.style.display = "none";
+                nomorInput.style.borderColor = "#e9edef";
+            }
+
+            return isValid;
+        }
+
+        // Event Listener Submit
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (!validateForm()) return;
+
+            // Mulai Loading
+            setLoading(true);
+
+            // Siapkan Data
+            const formData = new FormData();
+            formData.append('nama', namaInput.value.trim());
+            formData.append('nomor', nomorInput.value.trim());
+            formData.append('timestamp', new Date().toISOString());
+
+            // Cek apakah menggunakan Google Script atau Mode Demo
+            if (GOOGLE_SCRIPT_URL) {
+                // KIRIM KE GOOGLE SHEETS
+                fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    // Google Apps Script seringkali return opaque response jika no-cors
+                    // Kita asumsikan sukses jika tidak ada network error
+                    showSuccess(namaInput.value.trim());
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast("Terjadi kesalahan koneksi. Silakan coba lagi.");
+                    setLoading(false);
+                });
+            } else {
+                // MODE DEMO (Simulasi)
+                console.log("Mode Demo Aktif. Data yang akan dikirim:", {
+                    nama: namaInput.value.trim(),
+                    nomor: nomorInput.value.trim()
+                });
+                
+                // Simulasi delay jaringan 1.5 detik
+                setTimeout(() => {
+                    showSuccess(namaInput.value.trim());
+                    showToast("Mode Demo: Data tidak dikirim ke Sheet (URL belum diset)");
+                }, 1500);
+            }
+        });
+
+        function setLoading(isLoading) {
+            if (isLoading) {
+                submitBtn.disabled = true;
+                btnText.style.display = 'none';
+                spinner.style.display = 'block';
+            } else {
+                submitBtn.disabled = false;
+                btnText.style.display = 'block';
+                spinner.style.display = 'none';
+            }
+        }
+
+        function showSuccess(name) {
+            setLoading(false);
+            registrationView.classList.add('hidden');
+            successView.style.display = 'block';
+            resultName.textContent = name;
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Hapus error saat mengetik
+        namaInput.addEventListener('input', () => {
+            errorNama.style.display = 'none';
+            namaInput.style.borderColor = '#e9edef';
+        });
+        nomorInput.addEventListener('input', () => {
+            errorNomor.style.display = 'none';
+            nomorInput.style.borderColor = '#e9edef';
+        });
+
+    </script>
+</body>
+</html>
